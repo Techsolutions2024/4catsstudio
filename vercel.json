@@ -52,15 +52,6 @@
           "value": "Content-Type, Authorization"
         }
       ]
-    },
-    {
-      "source": "/(.*\\.(cube|CUBE))",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain"
-        }
-      ]
     }
   ],
   "env": {
