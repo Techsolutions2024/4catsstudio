@@ -1,122 +1,78 @@
-# 4Cats Vintage Photobooth
+# TxPhotobooth - Professional Photo Studio
 
-Ứng dụng photobooth vintage với hiệu ứng filter thời gian thực sử dụng LUT (Look-Up Table).
+Ứng dụng photobooth chuyên nghiệp với khả năng chụp ảnh không giới hạn và áp dụng filter vintage.
 
-## ✨ Tính năng
+## Tính năng chính
 
-- 📸 Chụp ảnh với webcam thời gian thực
-- 🎨 Bộ lọc vintage đa dạng (B&W, Vintage, Warm, Custom)
-- ⏱️ Countdown đếm ngược từ 8 giây
-- 📱 Giao diện responsive, thân thiện với mobile
-- 💾 Lưu ảnh tự động vào thư mục vintage_output
-- 🎭 Hiệu ứng chụp ảnh chân thực (flash, shutter, shake)
-- ⚙️ Quản lý filter tùy chỉnh
+- 🎨 **Chụp ảnh không giới hạn**: Không giới hạn số lượng ảnh có thể chụp
+- ⏱️ **Delay 8 giây**: Tự động chụp ảnh cách nhau 8 giây để tạo dáng
+- 🖼️ **Filter vintage**: Nhiều bộ lọc màu sắc vintage đẹp mắt
+- 💾 **Lưu tự động**: Ảnh được lưu tự động vào folder `vintage_output`
+- 🎯 **Giao diện đơn giản**: Chỉ có 2 trang chính - Home và Vintage
 
-## 🚀 Deploy lên Vercel
+## Cài đặt và chạy
 
-### Cách 1: Deploy trực tiếp từ GitHub
+### Cách 1: Sử dụng Python Server (Khuyến nghị)
 
-1. **Fork repository này** hoặc tạo repository mới
-2. **Push code lên GitHub**
-3. **Truy cập [Vercel Dashboard](https://vercel.com/dashboard)**
-4. **Click "New Project"**
-5. **Import repository từ GitHub**
-6. **Vercel sẽ tự động detect và deploy**
-
-### Cách 2: Deploy bằng Vercel CLI
-
+1. Chạy server Python:
 ```bash
-# Cài đặt Vercel CLI
-npm i -g vercel
-
-# Login vào Vercel
-vercel login
-
-# Deploy project
-vercel
-
-# Deploy production
-vercel --prod
+python -m http.server 8000
 ```
 
-### Cách 3: Deploy từ thư mục local
+2. Mở trình duyệt và truy cập: `http://localhost:8000`
 
-1. **Tải toàn bộ project về máy**
-2. **Mở terminal trong thư mục project**
-3. **Chạy lệnh:**
-   ```bash
-   npx vercel
-   ```
-4. **Làm theo hướng dẫn trên terminal**
+### Cách 2: Mở trực tiếp file HTML
 
-## 📁 Cấu trúc thư mục
+1. Mở file `home.html` trực tiếp trong trình duyệt
+2. Lưu ý: Một số tính năng có thể không hoạt động do hạn chế bảo mật của trình duyệt
+
+## Cách sử dụng
+
+1. **Trang chủ (Home)**: 
+   - Chọn "Vintage Mode" để bắt đầu chụp ảnh
+
+2. **Trang Vintage**:
+   - Chọn filter mong muốn từ danh sách
+   - Nhấn "Start" để bắt đầu chụp ảnh liên tục
+   - Nhấn "Stop" để dừng chụp ảnh
+   - Nhấn "← Back" để quay lại trang chủ
+
+## Cấu trúc thư mục
 
 ```
-4cats-photobooth/
-├── api/
-│   └── save_vintage_photo.js    # API xử lý lưu ảnh
-├── filter/                      # Thư mục chứa file LUT
+ptb/
+├── home.html              # Trang chủ
+├── vintage.html           # Trang chụp ảnh vintage
+├── package.json           # Dependencies
+├── vintage_output/        # Folder lưu ảnh (tự động tạo)
+├── filter/                # Các file filter .cube
 │   ├── bw.CUBE
 │   ├── no1.cube
 │   ├── no2.cube
-│   └── WARM.CUBE
-├── vintage_output/              # Thư mục lưu ảnh đã chụp
-├── home.html                    # Trang chủ
-├── vintage.html                 # Trang photobooth chính
-├── vercel.json                  # Cấu hình Vercel
-├── package.json                 # Cấu hình Node.js
-└── README.md                    # File hướng dẫn
+│   └── ...
+└── frames/                # Các khung ảnh
+    ├── 1.png
+    ├── goc.png
+    └── ...
 ```
 
-## ⚙️ Cấu hình Vercel
+## Tính năng kỹ thuật
 
-File `vercel.json` đã được cấu hình sẵn với:
+- **Camera**: Sử dụng WebRTC để truy cập camera
+- **Filter**: Hỗ trợ file .cube cho color grading
+- **Lưu trữ**: Ảnh được tải xuống tự động với chất lượng PNG cao
+- **Responsive**: Tương thích với mọi kích thước màn hình
 
-- **Static file serving** cho HTML, CSS, JS
-- **API routing** cho việc lưu ảnh
-- **CORS headers** cho file LUT
-- **Fallback routing** về home.html
-- **File type detection** cho .cube files
+## Lưu ý
 
-## 🎨 Thêm Filter tùy chỉnh
+- Cần quyền truy cập camera để sử dụng
+- Ảnh được tải xuống tự động với tên file có timestamp
+- Hỗ trợ các trình duyệt hiện đại (Chrome, Firefox, Safari, Edge)
 
-1. **Tải file .cube hoặc .CUBE**
-2. **Upload vào thư mục `filter/`**
-3. **Restart ứng dụng**
-4. **Filter sẽ xuất hiện trong danh sách**
+## Phát triển bởi
 
-## 📱 Sử dụng
+**Tiva Solutions** - Chuyên cung cấp phần mềm photobooth chuyên nghiệp và giải pháp công nghệ hiện đại.
 
-1. **Mở trình duyệt và truy cập URL Vercel**
-2. **Cho phép truy cập webcam**
-3. **Chọn filter mong muốn**
-4. **Click "Start" để bắt đầu chụp ảnh**
-5. **Ứng dụng sẽ tự động chụp ảnh mỗi 8 giây**
-6. **Ảnh được lưu tự động vào vintage_output**
-
-## 🔧 Troubleshooting
-
-### Lỗi webcam không hoạt động
-- Đảm bảo đã cho phép truy cập webcam
-- Sử dụng HTTPS (Vercel tự động cung cấp)
-- Kiểm tra trình duyệt có hỗ trợ getUserMedia
-
-### Lỗi lưu ảnh
-- Kiểm tra quyền ghi file trong thư mục vintage_output
-- Đảm bảo API endpoint hoạt động đúng
-
-### Lỗi filter không load
-- Kiểm tra file .cube có đúng format không
-- Đảm bảo file được đặt trong thư mục filter/
-
-## 📄 License
-
-MIT License - Xem file LICENSE để biết thêm chi tiết.
-
-## 🤝 Đóng góp
-
-Mọi đóng góp đều được chào đón! Hãy tạo Pull Request hoặc Issue.
-
----
-
-**Tạo bởi 4Cats Team** 🐱
+- 📞 Hotline: 0395 458 706
+- 📧 Email: info@tivasolutions.com
+- 🌐 Website: [Tiva Solutions](https://tivasolutions.com)
