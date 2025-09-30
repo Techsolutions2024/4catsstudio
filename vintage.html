@@ -60,18 +60,6 @@
             object-fit: cover;
         }
 
-        .countdown-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 4em;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            z-index: 10;
-            pointer-events: none;
-        }
 
         .preset-section {
             margin-top: 15px;
@@ -673,23 +661,6 @@
             font-weight: 500;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, rgba(233, 30, 99, 0.2) 0%, rgba(244, 143, 177, 0.2) 100%);
-            border-radius: 10px;
-            margin-top: 15px;
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(233, 30, 99, 0.1);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #e91e63 0%, #f48fb1 50%, #f8bbd9 100%);
-            border-radius: 10px;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(233, 30, 99, 0.3);
-        }
 
         @media (max-width: 768px) {
             .camera-container {
@@ -708,7 +679,6 @@
             <div class="camera-container">
                 <video id="originalVideo" autoplay muted playsinline style="position:absolute; opacity:0; pointer-events:none; width:1px; height:1px;"></video>
                 <canvas id="filteredCanvas"></canvas>
-                <div class="countdown-overlay" id="countdownOverlay" style="display: none;"></div>
             </div>
             
             <div class="preset-section">
@@ -734,9 +704,6 @@
                         <span class="icon">🏠</span>Back
                     </button>
                 </div>
-            </div>
-            <div class="progress-bar" id="progressBar" style="display: none;">
-                <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
 
@@ -876,23 +843,15 @@
         let isFilterEnabled = false;
         let animationId = null;
         let currentPreset = 'original';
-        let isCapturing = false;
-        let capturedPhotos = [];
-        let captureCount = 0;
-        let captureInterval = null;
-        let isContinuousMode = false;
         let isFullscreen = false;
 
         // UI elements
         const originalVideo = document.getElementById('originalVideo');
         const filteredCanvas = document.getElementById('filteredCanvas');
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const countdownOverlay = document.getElementById('countdownOverlay');
         const startButton = document.getElementById('startButton');
         const backButton = document.getElementById('backButton');
         const fullscreenButton = document.getElementById('fullscreenButton');
-        const progressBar = document.getElementById('progressBar');
-        const progressFill = document.getElementById('progressFill');
 
         // Preset configurations
         let presets = {
@@ -1433,233 +1392,29 @@
             processFrame();
         }
 
-        // Start photo capture session
+        // Toggle Start/Stop button
         function startCapture() {
-            if (isCapturing) {
-                // Stop capturing
-                stopCapture();
-                return;
+            if (startButton.textContent === 'Start') {
+                // Switch to Stop
+                startButton.textContent = 'Stop';
+                startButton.style.background = 'linear-gradient(145deg, #ef5350 0%, #f44336 100%)';
+            } else {
+                // Switch to Start
+                startButton.textContent = 'Start';
+                startButton.style.background = 'linear-gradient(145deg, #e91e63 0%, #f48fb1 100%)';
             }
-            
-            isCapturing = true;
-            isContinuousMode = true;
-            capturedPhotos = [];
-            captureCount = 0;
-            
-            startButton.disabled = false;
-            startButton.textContent = 'Stop';
-            startButton.style.background = 'linear-gradient(145deg, #ef5350 0%, #f44336 100%)';
-            progressBar.style.display = 'block';
-            
-            // Start continuous capture
-            startContinuousCapture();
         }
 
-        // Stop photo capture session
+        // Stop button (same as start - they toggle together)
         function stopCapture() {
-            isCapturing = false;
-            isContinuousMode = false;
-            
-            startButton.disabled = false;
-            startButton.textContent = 'Start';
-            startButton.style.background = 'linear-gradient(145deg, #e91e63 0%, #f48fb1 100%)';
-            progressBar.style.display = 'none';
-            
-            if (captureInterval) {
-                clearInterval(captureInterval);
-                captureInterval = null;
-            }
-            
-            countdownOverlay.style.display = 'none';
+            startCapture(); // Same function
         }
 
-        // Start continuous capture with 8-second intervals
-        function startContinuousCapture() {
-            // First photo immediately
-            capturePhoto();
-            
-            // Then continue with 8-second intervals
-            captureInterval = setInterval(() => {
-                if (isCapturing && isContinuousMode) {
-                    capturePhoto();
-                } else {
-                    clearInterval(captureInterval);
-                    captureInterval = null;
-                }
-            }, 8000); // 8 seconds delay
-        }
-
-        // Start countdown and capture sequence (for single photo)
-        function startCountdownAndCapture() {
-            let countdown = 8;
-            countdownOverlay.style.display = 'block';
-            countdownOverlay.textContent = countdown;
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                    countdownOverlay.textContent = countdown;
-                } else {
-                    clearInterval(countdownInterval);
-                    countdownOverlay.style.display = 'none';
-                    capturePhoto();
-                }
-            }, 1000);
-        }
-
-        // Capture a single photo
-        function capturePhoto() {
-            // Create canvas for photo
-            const photoCanvas = document.createElement('canvas');
-            const photoCtx = photoCanvas.getContext('2d');
-            
-            // Set canvas size to match filteredCanvas dimensions
-            const sourceWidth = filteredCanvas.width;
-            const sourceHeight = filteredCanvas.height;
-            photoCanvas.width = sourceWidth;
-            photoCanvas.height = sourceHeight;
-            
-            // Enable image smoothing for better quality
-            photoCtx.imageSmoothingEnabled = true;
-            photoCtx.imageSmoothingQuality = 'high';
-            
-            // Apply image enhancement for better quality
-            photoCtx.filter = 'contrast(1.1) brightness(1.05) saturate(1.1)';
-            
-            // Draw current frame to photo canvas (NO flip - same as camera view)
-            // Use filteredCanvas to match live view but without flip
-            photoCtx.drawImage(filteredCanvas, 0, 0, sourceWidth, sourceHeight);
-            
-            // Convert to blob and save with high quality
-            photoCanvas.toBlob((blob) => {
-                const photoUrl = URL.createObjectURL(blob);
-                const photoData = {
-                    id: captureCount,
-                    url: photoUrl,
-                    timestamp: Date.now()
-                };
-                capturedPhotos.push(photoData);
-                
-                // Save to vintage_output folder
-                savePhotoToVintageOutput(photoCanvas, captureCount);
-                
-                captureCount++;
-                updateProgress();
-                
-                // Show countdown for next photo if in continuous mode
-                if (isCapturing && isContinuousMode) {
-                    showNextPhotoCountdown();
-                }
-            }, 'image/png', 1.0); // Maximum quality PNG
-        }
-
-        // Show countdown for next photo
-        function showNextPhotoCountdown() {
-            let countdown = 8;
-            countdownOverlay.style.display = 'block';
-            countdownOverlay.textContent = countdown;
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                    countdownOverlay.textContent = countdown;
-                } else {
-                    clearInterval(countdownInterval);
-                    countdownOverlay.style.display = 'none';
-                }
-            }, 1000);
-        }
-
-        // Update progress bar (show total photos captured)
-        function updateProgress() {
-            progressFill.style.width = '100%';
-            // Update progress bar text to show count
-            const progressText = document.getElementById('progressText') || document.createElement('div');
-            progressText.id = 'progressText';
-            progressText.style.textAlign = 'center';
-            progressText.style.marginTop = '5px';
-            progressText.style.color = '#e91e63';
-            progressText.style.fontWeight = 'bold';
-            progressText.textContent = `Photos captured: ${captureCount}`;
-            
-            if (!progressBar.querySelector('#progressText')) {
-                progressBar.appendChild(progressText);
-            }
-        }
-
-        // Save photo to vintage_output folder (HTML5 download)
-        function savePhotoToVintageOutput(canvas, index) {
-            canvas.toBlob((blob) => {
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                const filename = `vintage_${timestamp}_${index + 1}.png`;
-                
-                // Create download link
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = filename;
-                link.style.display = 'none';
-                
-                // Add to body, click, and remove
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // Clean up
-                URL.revokeObjectURL(url);
-                
-                console.log(`Photo ${index + 1} saved as ${filename}`);
-                
-                // Show notification
-                showSaveNotification(`Đã lưu ảnh ${index + 1}: ${filename}`);
-            }, 'image/png', 1.0); // Maximum quality PNG
-        }
-
-        // Show save notification
-        function showSaveNotification(message) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(45deg, #66bb6a, #4caf50);
-                color: white;
-                padding: 15px 25px;
-                border-radius: 15px;
-                font-weight: 600;
-                font-size: 14px;
-                z-index: 1100;
-                transform: translateX(400px);
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                max-width: 300px;
-            `;
-            notification.textContent = message;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => notification.style.transform = 'translateX(0)', 10);
-            setTimeout(() => {
-                notification.style.transform = 'translateX(400px)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        }
 
 
         // Go back to home page
         function goBack() {
-            if (isCapturing) {
-                if (confirm('Bạn đang trong quá trình chụp ảnh. Bạn có chắc muốn dừng và quay lại trang chủ?')) {
-                    stopCapture();
-                    window.location.href = 'home.html';
-                }
-            } else {
-                window.location.href = 'home.html';
-            }
+            window.location.href = 'home.html';
         }
 
         // Toggle fullscreen mode
