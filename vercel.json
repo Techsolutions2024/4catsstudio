@@ -12,22 +12,6 @@
     {
       "source": "/vintage",
       "destination": "/vintage.html"
-    },
-    {
-      "source": "/filter/(.*)",
-      "destination": "/filter/$1"
-    },
-    {
-      "source": "/vintage_output/(.*)",
-      "destination": "/vintage_output/$1"
-    },
-    {
-      "source": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|cube|CUBE))",
-      "destination": "/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/home.html"
     }
   ],
   "functions": {
@@ -52,9 +36,15 @@
           "value": "Content-Type, Authorization"
         }
       ]
+    },
+    {
+      "source": "/:path*.(cube|CUBE)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain"
+        }
+      ]
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
