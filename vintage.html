@@ -304,18 +304,51 @@
         }
 
         .back-button {
-            background: linear-gradient(145deg, #6c757d 0%, #495057 100%);
+            width: 100px;
+            height: 45px;
+            border: none;
+            border-radius: 22px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #e91e63 0%, #f48fb1 100%);
             color: white;
-            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
-            border: 2px solid rgba(108, 117, 125, 0.3);
-            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .back-button:hover::before {
+            left: 100%;
         }
 
         .back-button:hover {
-            background: linear-gradient(145deg, #495057 0%, #343a40 100%);
-            color: white;
+            background: linear-gradient(145deg, #c2185b 0%, #e91e63 100%);
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(108, 117, 125, 0.4);
+            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.4);
+        }
+
+        .back-button:active {
+            transform: translateY(-1px);
+        }
+
+        .back-button .icon {
+            font-size: 1em;
+            margin-right: 6px;
+            display: inline-block;
         }
 
 
@@ -557,7 +590,9 @@
                     <button class="filter-control-btn" id="addFilterBtn">+ Add Filter</button>
                     <button class="filter-control-btn secondary" id="manageFiltersBtn">⚙️ Manage</button>
                     <button class="start-button" id="startButton">Start</button>
-                    <button class="back-button" id="backButton">← Back</button>
+                    <button class="back-button" id="backButton">
+                        <span class="icon">🏠</span>Back
+                    </button>
                 </div>
             </div>
             <div class="progress-bar" id="progressBar" style="display: none;">
