@@ -1,0 +1,69 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/home.html"
+    },
+    {
+      "source": "/home",
+      "destination": "/home.html"
+    },
+    {
+      "source": "/vintage",
+      "destination": "/vintage.html"
+    },
+    {
+      "source": "/filter/(.*)",
+      "destination": "/filter/$1"
+    },
+    {
+      "source": "/vintage_output/(.*)",
+      "destination": "/vintage_output/$1"
+    },
+    {
+      "source": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|cube|CUBE))",
+      "destination": "/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/home.html"
+    }
+  ],
+  "functions": {
+    "api/save_vintage_photo.js": {
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/filter/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(cube|CUBE))",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
